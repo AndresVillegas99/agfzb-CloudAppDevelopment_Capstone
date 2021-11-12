@@ -1,11 +1,11 @@
   applications:
-  - name: djangoapp
+  - name: SuperBestCars
     routes:
-      - route: $HOST.$DOMAIN
+      - route: sbcnx.us-south.cf.appdomain.cloud
     memory: 128M
     buildpack: python_buildpack
-  - name: djangoapp-nginx
+  - name: SuperBestCars-nginx
     routes:
-      - route: $HOST.$DOMAIN/static
+      - route: sbcnx.us-south.cf.appdomain.cloud/static
     memory: 128M
     buildpack: staticfile_buildpack
