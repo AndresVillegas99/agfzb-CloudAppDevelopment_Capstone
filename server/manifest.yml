@@ -1,11 +1,11 @@
   applications:
   - name: SuperBestCars
     routes:
-      - route: sbcnx.us-south.cf.appdomain.cloud
+      - route: SuperBestCarsNX.us-south.cf.appdomain.cloud
     memory: 128M
     buildpack: python_buildpack
   - name: SuperBestCars-nginx
     routes:
-      - route: sbcnx.us-south.cf.appdomain.cloud/static
+      - route: SuperBestCarsNX.us-south.cf.appdomain.cloud/static
     memory: 128M
     buildpack: staticfile_buildpack

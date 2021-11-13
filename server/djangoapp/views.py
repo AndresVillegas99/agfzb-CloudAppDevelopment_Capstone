@@ -72,7 +72,7 @@ def registration_request(request):
             user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name,
                                             password=password)
             login(request, user)
-            return redirect("onlinecourse:index")
+            return redirect("djangoapp:index")
         else:
             context['message'] = "User already exists."
             return render(request, 'djangoapp/registration.html', context)
