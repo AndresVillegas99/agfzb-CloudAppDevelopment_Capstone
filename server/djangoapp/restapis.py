@@ -1,6 +1,6 @@
 import requests
 import json
-from .models import CarDealer
+from .models import CarDealer,DealerReview
 from requests.auth import HTTPBasicAuth
 
 
@@ -55,11 +55,13 @@ def get_dealer_by_id_from_cf(url, dealerId):
     # Call get_request with a URL parameter
     json_result = get_request(url)
     if json_result:
-        reviews = json_result['body']
+        body = json_result['body']
+        data = body['data']
+        reviews = data['docs']
         # For each dealer object
         for review in reviews:
             # Get its content in `doc` object
-            review_doc = review["data"]
+            review_doc = review
             # Create a CarDealer object with values in `doc` object
             if review_doc["id"] == dealerId:
 
