@@ -55,7 +55,7 @@ def get_dealer_by_id_from_cf(url, dealerId):
     # Call get_request with a URL parameter
     json_result = get_request(url)
     if json_result:
-        reviews = json_result["body"]
+        reviews = json_result['body']
         # For each dealer object
         for review in reviews:
             # Get its content in `doc` object
