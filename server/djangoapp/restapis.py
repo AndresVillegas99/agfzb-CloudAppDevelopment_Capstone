@@ -9,6 +9,17 @@ def get_request(url, **kwargs):
     
     print("GET from {} ".format(url))
     try:
+        if "api_key" in kwargs:
+            # Basic authentication GET
+            params = dict()
+            params["text"] = kwargs["text"]
+            params["version"] = kwargs["version"]
+            params["features"] = kwargs["features"]
+            params["return_analyzed_text"] = kwargs["return_analyzed_text"]
+            print(params)
+            response = requests.get(url, headers={'Content-Type': 'application/json'},
+                                    params=params, auth=HTTPBasicAuth('apikey', kwargs["api_key"]))
+        else:
         # Call get method of requests library with URL and parameters
         response = requests.get(url, headers={'Content-Type': 'application/json'},
                                     params=kwargs)
@@ -68,16 +79,27 @@ def get_dealer_by_id_from_cf(url, dealerId):
                 dealer_obj = DealerReview(review=review_doc["review"], dealership=review_doc["dealership"], name=review_doc["name"],
                                    id=review_doc["id"], purchase=review_doc["purchase"], purchase_date=review_doc["purchase_date"],
                                    car_make=review_doc["car_make"],
-                                   car_model=review_doc["car_model"], car_year=review_doc["car_year"], sentiment=review_doc["sentiment"])
+                                   car_model=review_doc["car_model"], car_year=review_doc["car_year"], sentiment=analyze_review_sentiments(review_doc["review"]))
                 results.append(dealer_obj)
 
     return results
 
 
 # Create an `analyze_review_sentiments` method to call Watson NLU and analyze text
-# def analyze_review_sentiments(text):
+
 # - Call get_request() with specified arguments
 # - Get the returned sentiment label such as Positive or Negative
+def analyze_review_sentiments(dealer_review):
+    api_url = "https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/b526c0da-d75f-4414-ba2f-e8b2b0ce05e2"
+
+    
+    # Call get_request with a URL parameter and Watson NLU parameters
+    json_result = get_request(api_url,  api_key="u5d7NhJ3C0Iv6Kg1P4qEx7ZRKTDHVH0Po62KHrppaL2v",
+                                        version="2020-08-01",
+                                        text=dealer_review,
+                                        features="sentiment",
+                                        return_analyzed_text=True)
+    return json_result
 
 
 
