@@ -109,6 +109,12 @@ def get_dealer_details(request, dealer_id):
 # Create a `add_review` view to submit a review
 def add_review(request, dealer_id):
     if request.method =="POST":
+
+        url = "https://83647813.us-south.apigw.appdomain.cloud/dealershipapi/review/?dealerId="+str(dealer_id)
+        response = request.POST.get('json_payload')
+        
+
+        print(request.POST.get('body') )
         #if request.user.is_authenticated:
         review = {}
         review["time"] = datetime.utcnow().isoformat()
@@ -118,7 +124,7 @@ def add_review(request, dealer_id):
         review["purchase"] = False
         json_payload = {}
         json_payload["review"] = review
-        response = post_request(request.url,request.json_payload,dealerId= dealer_id)
+        response = post_request(request.get(url),request.json_payload,dealerId= dealer_id)
     return HttpResponse(response)
     
 
