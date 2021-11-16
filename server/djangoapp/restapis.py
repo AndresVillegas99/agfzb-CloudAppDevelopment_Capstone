@@ -2,6 +2,10 @@ import requests
 import json
 from .models import CarDealer,DealerReview
 from requests.auth import HTTPBasicAuth
+from ibm_watson import NaturalLanguageUnderstandingV1
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+from ibm_watson.natural_language_understanding_v1 import Features, EntitiesOptions, SentimentOptions
+
 
 
 def get_request(url, **kwargs):
@@ -21,7 +25,7 @@ def get_request(url, **kwargs):
                                     params=params, auth=HTTPBasicAuth('apikey', kwargs["api_key"]))
         else:
         # Call get method of requests library with URL and parameters
-        response = requests.get(url, headers={'Content-Type': 'application/json'},
+            response = requests.get(url, headers={'Content-Type': 'application/json'},
                                     params=kwargs)
     except:
         # If any error occurs
@@ -33,7 +37,19 @@ def get_request(url, **kwargs):
 
 # Create a `post_request` to make HTTP POST requests
 # e.g., response = requests.post(url, params=kwargs, json=payload)
-
+def post_request(url, json_payload, **kwargs):
+    print(json_payload)
+    print(kwargs)
+    print("POST from {} ".format(url))
+    try:
+        response = requests.post(url, params=kwargs, json=json_payload)
+        status_code = response.status_code
+        print("With status {} ".format(status_code))
+        json_data = json.loads(response.text)
+        print(json_data)
+        return json_data
+    except:
+        print("Network exception occurred")
 
 def get_dealers_from_cf(url, **kwargs):
     results = []
@@ -90,16 +106,23 @@ def get_dealer_by_id_from_cf(url, dealerId):
 # - Call get_request() with specified arguments
 # - Get the returned sentiment label such as Positive or Negative
 def analyze_review_sentiments(dealer_review):
-    api_url = "https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/b526c0da-d75f-4414-ba2f-e8b2b0ce05e2"
+    url = "https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/b526c0da-d75f-4414-ba2f-e8b2b0ce05e2" 
 
-    
-    # Call get_request with a URL parameter and Watson NLU parameters
-    json_result = get_request(api_url,  api_key="u5d7NhJ3C0Iv6Kg1P4qEx7ZRKTDHVH0Po62KHrppaL2v",
-                                        version="2020-08-01",
-                                        text=dealer_review,
-                                        features="sentiment",
-                                        return_analyzed_text=True)
-    return json_result
+    api_key = "u5d7NhJ3C0Iv6Kg1P4qEx7ZRKTDHVH0Po62KHrppaL2v" 
+
+    authenticator = IAMAuthenticator(api_key) 
+
+    natural_language_understanding = NaturalLanguageUnderstandingV1(version='2021-08-01',authenticator=authenticator) 
+
+    natural_language_understanding.set_service_url(url) 
+
+    response = natural_language_understanding.analyze( text=dealer_review+"hello hello hello",features=Features(sentiment=SentimentOptions(targets=[dealer_review+"hello hello hello"]))).get_result() 
+
+    label=json.dumps(response, indent=2) 
+
+    label = response['sentiment']['document']['label'] 
+
+    return(label) 
 
 
 
