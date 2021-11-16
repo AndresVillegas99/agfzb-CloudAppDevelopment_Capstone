@@ -111,10 +111,16 @@ def add_review(request, dealer_id):
     if request.method =="POST":
 
         url = "https://83647813.us-south.apigw.appdomain.cloud/dealershipapi/review/?dealerId="+str(dealer_id)
-        response = request.POST.get('json_payload')
+        #body_unicode = request.body.decode('utf-8')
+        body = json.loads(request.body)
+        url = body['url']
+        name= body['json_payload']
         
 
-        print(request.POST.get('body') )
+        
+        
+
+        print(name2)
         #if request.user.is_authenticated:
         review = {}
         review["time"] = datetime.utcnow().isoformat()
