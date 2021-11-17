@@ -116,13 +116,16 @@ def get_dealer_details(request, dealer_id):
 def add_review(request, dealer_id):
     context = {}
     if request.method =="GET":
+        cars = CarModel.objects.filter(dealerId = dealer_id)
+        context["cars"] = cars
+        context["dealer_id"] = dealer_id
         return render(request,'djangoapp/add_review.html', context)
 
     if request.method =="POST":
 
         url = "https://83647813.us-south.apigw.appdomain.cloud/dealershipapi/review/?dealerId="+str(dealer_id)
         #body_unicode = request.body.decode('utf-8')
-        body = json.loads(request.body)
+        print(request.body)
         #url = body['url']
         
        
@@ -137,13 +140,10 @@ def add_review(request, dealer_id):
         review["purchase_date"] = body['purchase_date']
         review["car_make"] =body['car_make']
         review["car_model"] = body['car_model']
-        review["car_year"] = body['car_year']
+        review["car_year"] = car.year.strftime("%Y")
         json_payload = {}
         json_payload["review"] = review
         response = post_request(url,json_payload,dealerId= dealer_id)
-        return HttpResponse(response)
+        return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
         #else:
             #return render(request, 'djangoapp/registration.html', context)
-
-
-
