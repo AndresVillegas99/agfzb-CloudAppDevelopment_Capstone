@@ -97,16 +97,26 @@ def get_dealerships(request):
 # ...
 def get_dealer_details(request, dealer_id):
     context = {}
+    print(request.body)
     if request.method == "GET":
         url = "https://83647813.us-south.apigw.appdomain.cloud/dealershipapi/review/?dealerId="+str(dealer_id)
+        url_ds = "https://83647813.us-south.apigw.appdomain.cloud/dealershipapi/dealership"
         # Get reviews from the URL
         reviews = get_dealer_by_id_from_cf(url, dealer_id)
+        #Get dealerhip list and filter the current one out
+        dealerships = get_dealers_from_cf(url_ds)
+        for dealer in dealerships:
+            if dealer.id == dealer_id:
+                dealer_info = dealer.full_name
+                
+        
         # Concat all the reviewers names and sentiments
         review_names = ' '.join([str(review.car_year) for review in reviews])
         review_sentiments = ' '.join([review.sentiment for review in reviews])
         review_info = "Name:" + review_names +" sentiment:"+ review_sentiments
-        print(review_info)
+        
         context ['reviews_list'] =reviews
+        context ['dealer'] = dealer_info
         context['dealer_id'] = dealer_id
         return render(request, 'djangoapp/dealer_details.html', context)
        
@@ -116,8 +126,14 @@ def get_dealer_details(request, dealer_id):
 def add_review(request, dealer_id):
     context = {}
     if request.method =="GET":
+        url_ds = "https://83647813.us-south.apigw.appdomain.cloud/dealershipapi/dealership"
         cars = CarModel.objects.filter(dealerId = dealer_id)
+        dealerships = get_dealers_from_cf(url_ds)
+        for dealer in dealerships:
+            if dealer.id == dealer_id:
+                dealer_name = dealer.full_name
         context["cars"] = cars
+        context["dealer"] = dealer_name
         context["dealer_id"] = dealer_id
         return render(request,'djangoapp/add_review.html', context)
 
@@ -128,15 +144,19 @@ def add_review(request, dealer_id):
         print(request.body)
         #url = body['url']
         
-       
+        if 'purchasecheck' in request.POST:
+            was_purchased = True
+        else:
+            was_purchased = False
+        print (was_purchased)
         #if request.user.is_authenticated:
         review = {}
         review["time"] = datetime.utcnow().isoformat()
-        review["name"] = body['name']
-        review["dealership"] = 11
-        review["review"] = "This is a great car dealer"
-        review["id"] = body['id']
-        review["purchase"] = body['purchase']
+        #review["name"] = body['name']
+        review["dealership"] = 13 
+        review["review"] = request.POST['content']
+        review["id"] = dealer_id
+        review["purchase"] = was_purchased
         review["purchase_date"] = body['purchase_date']
         review["car_make"] =body['car_make']
         review["car_model"] = body['car_model']
