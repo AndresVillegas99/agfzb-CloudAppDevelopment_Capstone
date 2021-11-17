@@ -14,6 +14,9 @@
     <body>
         <h4> Add a review for {{dealer}}</h4>
         <form action = "{% url 'djangoapp:add_review' dealer_id %}" method="post">
+
+            <H5>Enter your name here:</H5><br>
+            <input class="form-control" id="name" name="name" size="30" required></textarea><br>
             <H5>Enter the review content:</H5><br>
             <textarea class="form-control" id="content" name="content" rows="2" required></textarea><br>
             <div class = "form-check">
@@ -25,12 +28,12 @@
             <select name="car" id="car" class="form-select" required><br>
             
                 {% for car in cars %}
-                    <option selected value={{car.id}}>{{car.name}}-{{car.make.name}}-{{ car.year|date:"Y" }}</option>
+                    <option selected value={{car.id}}>{{car.name}}-{{car.car.name}}-{{ car.year|date:"Y" }}</option>
                 {% endfor %}
             </select><br>
             <h5>Select your purchase date</h5><br>
             <div class = "input-group date" data-provide="datepicker-inline"> 
-                <input class="date-own form-control" type="date" name="purchasedate" id="purchasedate"><br>
+                <input class="date-own form-control" type="date" name="purchasedate" id="purchasedate" required><br>
             </div>
             <button class="btn btn-primary" type="submit">Add review</button>
         </form>
