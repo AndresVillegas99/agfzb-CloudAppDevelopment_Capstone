@@ -89,6 +89,7 @@ def get_dealer_by_id_from_cf(url, dealerId):
         for review in reviews:
             # Get its content in `doc` object
             review_doc = review
+            print(review_doc)
             # Create a CarDealer object with values in `doc` object
             if review_doc["id"] == dealerId:
 
